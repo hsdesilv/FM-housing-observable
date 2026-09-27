@@ -1,0 +1,96 @@
+---
+title: "Interactive FM Housing Explorer"
+author: "Harshana De Silva Feelixge"
+format: 
+  html:
+    code-fold: true
+editor: visual
+---
+
+## FM Housing Data
+
+This interactive visualization explores housing sales in the Fargo-Moorhead area. Users can interact with the visualization to examine how housing characteristics relate to sold price.
+
+## Interactive Housing Price Explorer
+
+### Explore Housing Prices
+
+Use the controls below to explore how sold price relates to total square footage across the Fargo-Moorhead housing market. Select a city and adjust the year-built range to filter the properties displayed. Hover over individual points to view additional information about each property.
+
+```{ojs}
+housing = FileAttachment("data/FM_Housing_2018_2022_clean.csv").csv({typed: true})
+```
+
+```{ojs}
+viewof selectedCity = Inputs.select(
+  ["All Cities", "Fargo", "Moorhead", "West Fargo"],
+  {
+    label: "Select a City:",
+    value: "All Cities"
+  }
+)
+```
+
+```{ojs}
+viewof yearMin = Inputs.range(
+  [1900, 2022],
+  {
+    label: "Built After:",
+    value: 1950,
+    step: 1
+  }
+)
+
+viewof yearMax = Inputs.range(
+  [1900, 2022],
+  {
+    label: "Built Before:",
+    value: 2022,
+    step: 1
+  }
+)
+```
+
+```{ojs}
+filteredHousing = housing.filter(d =>
+  (selectedCity === "All Cities" || d["City"] === selectedCity) &&
+  d["Year Built"] >= yearMin &&
+  d["Year Built"] <= yearMax
+)
+
+```
+
+```{ojs}
+Plot.plot({
+  width: 900,
+  height: 500,
+
+  x: {
+    label: "Total Square Footage",
+    grid: true
+  },
+
+  y: {
+    label: "Sold Price ($)",
+    grid: true,
+    tickFormat: d => `$${d / 1000}k`
+  },
+
+  marks: [
+    Plot.dot(filteredHousing, {
+      x: "Total SqFt.",
+      y: "Sold Price",
+      r: 2,
+      opacity: 0.35,
+      tip: true,
+      channels: {
+    "City": "City",
+    "Year Built": "Year Built",
+    "Bedrooms": "Total Bedrooms",
+    "Bathrooms": "Total Bathrooms",
+    "Style": "Style"
+  }
+    })
+  ]
+})
+```
