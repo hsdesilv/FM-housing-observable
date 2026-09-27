@@ -1,0 +1,23 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Interactive FM Housing Explorer",
+    "section": "",
+    "text": "This interactive visualization explores housing sales in the Fargo-Moorhead area. Users can interact with the visualization to examine how housing characteristics relate to sold price."
+  },
+  {
+    "objectID": "index.html#fm-housing-data",
+    "href": "index.html#fm-housing-data",
+    "title": "Interactive FM Housing Explorer",
+    "section": "",
+    "text": "This interactive visualization explores housing sales in the Fargo-Moorhead area. Users can interact with the visualization to examine how housing characteristics relate to sold price."
+  },
+  {
+    "objectID": "index.html#interactive-housing-price-explorer",
+    "href": "index.html#interactive-housing-price-explorer",
+    "title": "Interactive FM Housing Explorer",
+    "section": "Interactive Housing Price Explorer",
+    "text": "Interactive Housing Price Explorer\n\nExplore Housing Prices\nUse the controls below to explore how sold price relates to total square footage across the Fargo-Moorhead housing market. Select a city and adjust the year-built range to filter the properties displayed. Hover over individual points to view additional information about each property.\n\n\nCode\nhousing = FileAttachment(\"data/FM_Housing_2018_2022_clean.csv\").csv({typed: true})\n\n\n\n\n\n\n\n\n\nCode\nviewof selectedCity = Inputs.select(\n  [\"All Cities\", \"Fargo\", \"Moorhead\", \"West Fargo\"],\n  {\n    label: \"Select a City:\",\n    value: \"All Cities\"\n  }\n)\n\n\n\n\n\n\n\n\n\nCode\nviewof yearMin = Inputs.range(\n  [1900, 2022],\n  {\n    label: \"Built After:\",\n    value: 1950,\n    step: 1\n  }\n)\n\nviewof yearMax = Inputs.range(\n  [1900, 2022],\n  {\n    label: \"Built Before:\",\n    value: 2022,\n    step: 1\n  }\n)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCode\nfilteredHousing = housing.filter(d =&gt;\n  (selectedCity === \"All Cities\" || d[\"City\"] === selectedCity) &&\n  d[\"Year Built\"] &gt;= yearMin &&\n  d[\"Year Built\"] &lt;= yearMax\n)\n\n\n\n\n\n\n\n\n\nCode\nPlot.plot({\n  width: 900,\n  height: 500,\n\n  x: {\n    label: \"Total Square Footage\",\n    grid: true\n  },\n\n  y: {\n    label: \"Sold Price ($)\",\n    grid: true,\n    tickFormat: d =&gt; `$${d / 1000}k`\n  },\n\n  marks: [\n    Plot.dot(filteredHousing, {\n      x: \"Total SqFt.\",\n      y: \"Sold Price\",\n      r: 2,\n      opacity: 0.35,\n      tip: true,\n      channels: {\n    \"City\": \"City\",\n    \"Year Built\": \"Year Built\",\n    \"Bedrooms\": \"Total Bedrooms\",\n    \"Bathrooms\": \"Total Bathrooms\",\n    \"Style\": \"Style\"\n  }\n    })\n  ]\n})"
+  }
+]
